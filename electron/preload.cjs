@@ -29,4 +29,9 @@ contextBridge.exposeInMainWorld('api', {
       };
     },
   },
+  files: {
+    readDir: (path) => ipcRenderer.invoke('files:readDir', path),
+    readFile: (path) => ipcRenderer.invoke('files:readFile', path),
+    getHomeDir: () => ipcRenderer.invoke('files:getHomeDir'),
+  },
 });

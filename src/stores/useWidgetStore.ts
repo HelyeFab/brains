@@ -14,7 +14,7 @@ interface WidgetStore {
 
 export const useWidgetStore = create<WidgetStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       widgets: [],
       activeWidgetId: null,
 

@@ -5,6 +5,7 @@ export interface Widget {
   type: WidgetType;
   title: string;
   icon?: string;
+  color?: string; // Tab/sidebar color for visual identification
   data?: Record<string, any>;
 }
 

@@ -16,6 +16,17 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Exclude xterm packages from server-side bundling
+      config.externals = config.externals || [];
+      config.externals.push({
+        '@xterm/xterm': 'commonjs @xterm/xterm',
+        '@xterm/addon-fit': 'commonjs @xterm/addon-fit',
+      });
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

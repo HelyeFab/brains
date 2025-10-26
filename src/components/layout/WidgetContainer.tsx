@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useWidgetStore } from '@/stores/useWidgetStore';
-import { TerminalWidget } from '@/components/widgets/TerminalWidget';
 import { SystemMonitorWidget } from '@/components/widgets/SystemMonitorWidget';
 import { FileExplorerWidget } from '@/components/widgets/FileExplorerWidget';
 import { BrowserWidget } from '@/components/widgets/BrowserWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
 import type { WidgetType } from '@/types';
 
+// Load TerminalWidget only on client side (xterm doesn't support SSR)
+const TerminalWidget = dynamic(
+  () => import('@/components/widgets/TerminalWidget').then(mod => ({ default: mod.TerminalWidget })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-muted-foreground">Loading terminal...</div>
+      </div>
+    ),
+  }
+);
+
 const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: string }>> = {
-  terminal: TerminalWidget,
+  terminal: TerminalWidget as React.ComponentType<{ widgetId: string }>,
   'system-monitor': SystemMonitorWidget,
   'file-explorer': FileExplorerWidget,
   browser: BrowserWidget,
@@ -16,8 +29,15 @@ const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: strin
 };
 
 export function WidgetContainer() {
-  const { widgets, activeWidgetId } = useWidgetStore();
+  const { widgets, activeWidgetId, addWidget } = useWidgetStore();
   const activeWidget = widgets.find((w) => w.id === activeWidgetId);
+
+  // Add welcome widget on first load if no widgets exist
+  useEffect(() => {
+    if (widgets.length === 0) {
+      addWidget('welcome');
+    }
+  }, []);
 
   if (!activeWidget) {
     return (

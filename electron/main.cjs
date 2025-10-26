@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs').promises;
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = !!process.env.ELECTRON_START_URL;
 const startUrl = process.env.ELECTRON_START_URL || '';
@@ -222,4 +223,55 @@ ipcMain.handle('system:unsubscribe', (event) => {
   if (systemIntervals.has(id)) clearInterval(systemIntervals.get(id));
   systemIntervals.delete(id);
   return { ok: true };
+});
+
+// IPC: File System
+ipcMain.handle('files:readDir', async (event, dirPath) => {
+  try {
+    // Security: Only allow access to home directory and subdirectories
+    const homeDir = require('os').homedir();
+    const resolvedPath = path.resolve(dirPath);
+
+    if (!resolvedPath.startsWith(homeDir)) {
+      return { ok: false, error: 'Access denied: Path must be within home directory' };
+    }
+
+    const entries = await fs.readdir(resolvedPath, { withFileTypes: true });
+    const files = entries.map((entry) => ({
+      name: entry.name,
+      type: entry.isDirectory() ? 'directory' : 'file',
+      path: path.join(resolvedPath, entry.name),
+      isHidden: entry.name.startsWith('.'),
+    }));
+
+    // Sort: directories first, then files, alphabetically
+    files.sort((a, b) => {
+      if (a.type === b.type) return a.name.localeCompare(b.name);
+      return a.type === 'directory' ? -1 : 1;
+    });
+
+    return { ok: true, files };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message) };
+  }
+});
+
+ipcMain.handle('files:readFile', async (event, filePath) => {
+  try {
+    const homeDir = require('os').homedir();
+    const resolvedPath = path.resolve(filePath);
+
+    if (!resolvedPath.startsWith(homeDir)) {
+      return { ok: false, error: 'Access denied: Path must be within home directory' };
+    }
+
+    const content = await fs.readFile(resolvedPath, 'utf-8');
+    return { ok: true, content };
+  } catch (e) {
+    return { ok: false, error: String(e && e.message) };
+  }
+});
+
+ipcMain.handle('files:getHomeDir', () => {
+  return { ok: true, path: require('os').homedir() };
 });
