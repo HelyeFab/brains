@@ -56,6 +56,17 @@ body {
   color: hsl(var(--foreground));
 }
 
+/* Electron window dragging */
+.drag-region {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
 /* Terminal styles */
 .xterm {
   padding: 8px;

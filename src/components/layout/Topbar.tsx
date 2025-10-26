@@ -30,11 +30,13 @@ export function Topbar() {
   ];
 
   return (
-    <header className="h-12 border-b border-border bg-card px-4 flex items-center justify-between" role="banner">
+    <header className="h-12 border-b border-border bg-card px-4 flex items-center justify-between drag-region" role="banner">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent select-none">
           Brains
         </h1>
+
+        <div className="no-drag">
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -63,9 +65,10 @@ export function Topbar() {
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2" role="toolbar" aria-label="Application controls">
+      <div className="flex items-center gap-2 no-drag" role="toolbar" aria-label="Application controls">
         <Button
           variant="ghost"
           size="icon"

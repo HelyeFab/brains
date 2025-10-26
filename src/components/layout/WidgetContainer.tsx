@@ -9,7 +9,6 @@ import { PomodoroWidget } from '@/components/widgets/PomodoroWidget';
 import { NotePadWidget } from '@/components/widgets/NotePadWidget';
 import { SettingsWidget } from '@/components/widgets/SettingsWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
-import { AIChatWidget } from '@/components/widgets/AIChatWidget';
 import { WidgetErrorBoundary } from '@/components/widgets/WidgetErrorBoundary';
 import type { WidgetType } from '@/types';
 
@@ -26,6 +25,19 @@ const TerminalWidget = dynamic(
   }
 );
 
+// Load AIChatWidget only on client side (react-syntax-highlighter doesn't support SSR well)
+const AIChatWidget = dynamic(
+  () => import('@/components/widgets/AIChatWidget').then(mod => ({ default: mod.AIChatWidget })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-muted-foreground">Loading AI Chat...</div>
+      </div>
+    ),
+  }
+);
+
 const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: string }>> = {
   terminal: TerminalWidget as React.ComponentType<{ widgetId: string }>,
   'system-monitor': SystemMonitorWidget,
@@ -36,7 +48,7 @@ const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: strin
   notepad: NotePadWidget,
   settings: SettingsWidget,
   calendar: CalendarWidget,
-  'ai-chat': AIChatWidget,
+  'ai-chat': AIChatWidget as React.ComponentType<{ widgetId: string }>,
 };
 
 export function WidgetContainer() {

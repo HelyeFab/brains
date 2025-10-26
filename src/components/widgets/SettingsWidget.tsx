@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Terminal, Palette, Type, Settings as SettingsIcon } from 'lucide-react';
+import { Terminal, Palette, Type, Settings as SettingsIcon, Bot, ExternalLink, AlertCircle } from 'lucide-react';
 
 interface SettingsWidgetProps {
   widgetId: string;
@@ -145,6 +145,61 @@ export function SettingsWidget({ widgetId }: SettingsWidgetProps) {
               <p className="text-xs text-muted-foreground">
                 Changes will apply to newly opened terminal widgets. Close and reopen existing terminals to see updates.
               </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* AI Chat Requirements */}
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 pb-4 border-b border-border">
+              <Bot className="h-5 w-5 text-primary" />
+              <div>
+                <h2 className="text-lg font-semibold">AI Chat Requirements</h2>
+                <p className="text-sm text-muted-foreground">
+                  Setup instructions for the AI Chat widget
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <div className="space-y-2 flex-1">
+                  <p className="text-sm font-medium">Ollama Installation Required</p>
+                  <p className="text-sm text-muted-foreground">
+                    The AI Chat widget requires Ollama to be installed and running on your system.
+                    At least one model must be pulled before you can start chatting.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold">Quick Setup:</h3>
+                <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
+                  <li>
+                    Install Ollama from{' '}
+                    <a
+                      href="https://ollama.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      ollama.com
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </li>
+                  <li>Open a terminal and run: <code className="px-2 py-0.5 bg-muted rounded text-xs font-mono">ollama pull llama3.2</code></li>
+                  <li>Verify Ollama is running: <code className="px-2 py-0.5 bg-muted rounded text-xs font-mono">ollama list</code></li>
+                  <li>Create an AI Chat widget and start chatting!</li>
+                </ol>
+              </div>
+
+              <div className="pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground">
+                  Popular models: llama3.2, mistral, codellama, phi3, gemma2
+                </p>
+              </div>
             </div>
           </div>
         </Card>
