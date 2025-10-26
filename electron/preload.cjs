@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   windows: {
     open: (kind) => ipcRenderer.invoke('windows:open', kind),
+    close: () => ipcRenderer.invoke('windows:close'),
   },
   browser: {
     open: (url) => ipcRenderer.invoke('browser:open', url),
@@ -33,5 +34,9 @@ contextBridge.exposeInMainWorld('api', {
     readDir: (path) => ipcRenderer.invoke('files:readDir', path),
     readFile: (path) => ipcRenderer.invoke('files:readFile', path),
     getHomeDir: () => ipcRenderer.invoke('files:getHomeDir'),
+  },
+  notes: {
+    export: (note) => ipcRenderer.invoke('notes:export', note),
+    import: () => ipcRenderer.invoke('notes:import'),
   },
 });

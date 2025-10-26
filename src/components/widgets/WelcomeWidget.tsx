@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useWidgetStore } from '@/stores/useWidgetStore';
-import { Terminal, Activity, Folder, Globe, Sparkles } from 'lucide-react';
+import { Terminal, Activity, Folder, Globe, Sparkles, Calendar } from 'lucide-react';
 import type { WidgetType } from '@/types';
 
 interface WelcomeWidgetProps {
@@ -28,18 +28,18 @@ export function WelcomeWidget({ widgetId }: WelcomeWidgetProps) {
       color: 'text-blue-500',
     },
     {
+      type: 'calendar',
+      title: 'Calendar',
+      description: 'Schedule and manage your events',
+      icon: Calendar,
+      color: 'text-purple-500',
+    },
+    {
       type: 'file-explorer',
       title: 'File Explorer',
       description: 'Browse and manage your files',
       icon: Folder,
       color: 'text-yellow-500',
-    },
-    {
-      type: 'browser',
-      title: 'Browser',
-      description: 'Open web pages in new windows',
-      icon: Globe,
-      color: 'text-purple-500',
     },
   ];
 
@@ -49,7 +49,7 @@ export function WelcomeWidget({ widgetId }: WelcomeWidgetProps) {
         {/* Header */}
         <div className="text-center space-y-4 py-8">
           <div className="flex items-center justify-center gap-3">
-            <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+            <Sparkles className="h-12 w-12 text-primary animate-pulse" aria-hidden="true" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Welcome to Brains
             </h1>
@@ -67,14 +67,14 @@ export function WelcomeWidget({ widgetId }: WelcomeWidgetProps) {
             <CardDescription>Choose a widget to get started</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="list" aria-label="Available widgets">
               {widgets.map((widget) => {
                 const Icon = widget.icon;
                 return (
-                  <Card key={widget.type} className="hover:border-primary transition-colors cursor-pointer group">
+                  <Card key={widget.type} className="hover:border-primary transition-colors cursor-pointer group" role="listitem">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors`}>
+                        <div className={`p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors`} aria-hidden="true">
                           <Icon className={`h-6 w-6 ${widget.color}`} />
                         </div>
                         <div className="flex-1 space-y-2">
@@ -85,6 +85,7 @@ export function WelcomeWidget({ widgetId }: WelcomeWidgetProps) {
                             size="sm"
                             className="mt-2"
                             onClick={() => addWidget(widget.type)}
+                            aria-label={`Open ${widget.title}`}
                           >
                             Open
                           </Button>

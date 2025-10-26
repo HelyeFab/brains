@@ -26,6 +26,11 @@ export const useWidgetStore = create<WidgetStore>()(
           'file-explorer': 'File Explorer',
           browser: 'Browser',
           welcome: 'Welcome',
+          pomodoro: 'Pomodoro Timer',
+          notepad: 'Notes',
+          settings: 'Settings',
+          calendar: 'Calendar',
+          'ai-chat': 'AI Chat',
         };
 
         set((state) => ({
@@ -43,11 +48,14 @@ export const useWidgetStore = create<WidgetStore>()(
       },
 
       removeWidget: (id) => {
-        set((state) => ({
-          widgets: state.widgets.filter((w) => w.id !== id),
-          activeWidgetId:
-            state.activeWidgetId === id ? state.widgets[0]?.id ?? null : state.activeWidgetId,
-        }));
+        set((state) => {
+          const remainingWidgets = state.widgets.filter((w) => w.id !== id);
+          return {
+            widgets: remainingWidgets,
+            activeWidgetId:
+              state.activeWidgetId === id ? remainingWidgets[0]?.id ?? null : state.activeWidgetId,
+          };
+        });
       },
 
       setActiveWidget: (id) => {
