@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { useWidgetStore } from '@/stores/useWidgetStore';
 import { SystemMonitorWidget } from '@/components/widgets/SystemMonitorWidget';
@@ -52,25 +52,20 @@ const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: strin
 };
 
 export function WidgetContainer() {
-  const { widgets, activeWidgetId, addWidget } = useWidgetStore();
+  const { widgets, activeWidgetId } = useWidgetStore();
   const activeWidget = widgets.find((w) => w.id === activeWidgetId);
 
-  // Add welcome widget on first load if no widgets exist
-  useEffect(() => {
-    if (widgets.length === 0) {
-      addWidget('welcome');
-    }
-  }, []);
-
+  // Always show Welcome widget when no active widget is selected
   if (!activeWidget) {
     return (
-      <main className="h-full flex items-center justify-center bg-background" role="main" aria-label="Widget workspace">
-        <div className="text-center" role="status">
-          <h2 className="text-2xl font-bold mb-2">Welcome to Brains</h2>
-          <p className="text-muted-foreground">
-            Add a widget to get started
-          </p>
-        </div>
+      <main className="h-full bg-background overflow-hidden" role="main" aria-label="Welcome widget">
+        <WidgetErrorBoundary
+          widgetId="welcome-default"
+          widgetTitle="Welcome"
+          key="welcome-default"
+        >
+          <WelcomeWidget widgetId="welcome-default" />
+        </WidgetErrorBoundary>
       </main>
     );
   }

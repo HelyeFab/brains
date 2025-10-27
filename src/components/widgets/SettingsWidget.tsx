@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Terminal, Palette, Type, Settings as SettingsIcon, Bot, ExternalLink, AlertCircle } from 'lucide-react';
+import { Terminal, Palette, Type, Settings as SettingsIcon, Bot, ExternalLink, AlertCircle, Sparkles } from 'lucide-react';
+import { useThemeStore } from '@/stores/useThemeStore';
+import { themes, type ThemeId } from '@/config/themes';
 
 interface SettingsWidgetProps {
   widgetId: string;
@@ -21,6 +23,7 @@ const terminalThemes = {
 const fontSizes = [10, 12, 14, 16, 18, 20, 22, 24];
 
 export function SettingsWidget({ widgetId }: SettingsWidgetProps) {
+  const { themeId, setTheme } = useThemeStore();
   const [terminalTheme, setTerminalTheme] = useState<keyof typeof terminalThemes>('dracula');
   const [terminalFontSize, setTerminalFontSize] = useState(14);
 
@@ -70,6 +73,71 @@ export function SettingsWidget({ widgetId }: SettingsWidgetProps) {
             </p>
           </div>
         </div>
+
+        {/* App Theme Settings */}
+        <Card className="p-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-border">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <div>
+                <h2 className="text-lg font-semibold">App Theme</h2>
+                <p className="text-sm text-muted-foreground">
+                  Choose your workspace theme and background
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {themes.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setTheme(theme.id)}
+                  className={`
+                    relative p-4 rounded-lg border-2 transition-all text-left
+                    ${themeId === theme.id
+                      ? 'border-primary bg-primary/5 shadow-lg'
+                      : 'border-border hover:border-primary/50 hover:bg-accent'
+                    }
+                  `}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-3xl">{theme.icon}</div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold">{theme.name}</h3>
+                        {themeId === theme.id && (
+                          <span className="text-xs px-2 py-0.5 bg-primary text-primary-foreground rounded-full">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {theme.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  {theme.backgroundPattern && (
+                    <div className="mt-3 h-16 rounded border border-border overflow-hidden relative bg-background/50">
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 opacity-30">
+                        {theme.backgroundPattern.icons.slice(0, 5).map((icon, i) => (
+                          <img
+                            key={i}
+                            src={`${theme.backgroundPattern!.path}/${icon}`}
+                            alt=""
+                            className="h-8 w-8"
+                            style={{ opacity: theme.backgroundPattern!.opacity * 10 }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </Card>
 
         {/* Terminal Settings */}
         <Card className="p-6">
@@ -232,7 +300,7 @@ export function SettingsWidget({ widgetId }: SettingsWidgetProps) {
         data-slug="YbEwc5qvHT"
         data-color="#5F7FFF"
         data-emoji=""
-        data-font="Cookie"
+        data-font="Arial"
         data-text="Buy me a coffee"
         data-outline-color="#000000"
         data-font-color="#ffffff"

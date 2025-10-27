@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import type { WidgetType } from '@/types';
 import * as Popover from '@radix-ui/react-popover';
+import { ConfirmDialog } from '@/components/custom';
 
 const widgetIcons: Record<WidgetType, React.ElementType> = {
   terminal: Terminal,
@@ -33,9 +34,10 @@ const colorOptions = [
 ];
 
 export function Sidebar() {
-  const { widgets, activeWidgetId, setActiveWidget, removeWidget, updateWidget } = useWidgetStore();
+  const { widgets, activeWidgetId, setActiveWidget, removeWidget, updateWidget, clearWidgets } = useWidgetStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleStartEdit = (widgetId: string, currentTitle: string) => {
     setEditingId(widgetId);
@@ -55,10 +57,21 @@ export function Sidebar() {
 
   return (
     <nav className="h-full bg-card flex flex-col" aria-label="Widget list">
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
           Widgets
         </h2>
+        {widgets.length > 0 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => setShowClearConfirm(true)}
+            aria-label={`Close all ${widgets.length} widgets`}
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1" role="list">
@@ -238,6 +251,17 @@ export function Sidebar() {
       <div className="p-4 border-t border-border text-xs text-muted-foreground" role="status" aria-live="polite">
         {widgets.length} widget{widgets.length !== 1 ? 's' : ''} active
       </div>
+
+      <ConfirmDialog
+        open={showClearConfirm}
+        onOpenChange={setShowClearConfirm}
+        title="Clear All Widgets"
+        description={`Are you sure you want to close all ${widgets.length} widget${widgets.length !== 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText="Clear All"
+        cancelText="Cancel"
+        variant="destructive"
+        onConfirm={clearWidgets}
+      />
     </nav>
   );
 }

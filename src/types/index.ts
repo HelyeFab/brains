@@ -91,6 +91,10 @@ export interface ElectronAPI {
   windows: {
     open: (kind: string) => Promise<boolean>;
   };
+  window: {
+    toggleFullscreen: () => Promise<boolean>;
+    isFullscreen: () => Promise<boolean>;
+  };
   browser: {
     open: (url: string) => Promise<{ ok: boolean; error?: string }>;
   };

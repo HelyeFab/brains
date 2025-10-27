@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useWidgetStore } from '@/stores/useWidgetStore';
-import { Terminal, Activity, Folder, Globe, Sparkles, Calendar } from 'lucide-react';
+import { Terminal, Activity, Folder, Globe, Calendar } from 'lucide-react';
 import type { WidgetType } from '@/types';
 
 interface WelcomeWidgetProps {
@@ -49,7 +49,11 @@ export function WelcomeWidget({ widgetId }: WelcomeWidgetProps) {
         {/* Header */}
         <div className="text-center space-y-4 py-8">
           <div className="flex items-center justify-center gap-3">
-            <Sparkles className="h-12 w-12 text-primary animate-pulse" aria-hidden="true" />
+            <img
+              src="/brain.svg"
+              alt="Brains Logo"
+              className="h-16 w-16 animate-pulse"
+            />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Welcome to Brains
             </h1>

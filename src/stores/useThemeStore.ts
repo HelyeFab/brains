@@ -1,25 +1,36 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { type ThemeId, themes, getTheme } from '@/config/themes';
 
 interface ThemeStore {
+  themeId: ThemeId;
+  // Legacy compatibility
   theme: 'light' | 'dark';
   toggleTheme: () => void;
-  setTheme: (theme: 'light' | 'dark') => void;
+  setTheme: (themeId: ThemeId) => void;
 }
 
 export const useThemeStore = create<ThemeStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
+      themeId: 'dark',
       theme: 'dark',
 
       toggleTheme: () => {
-        set((state) => ({
-          theme: state.theme === 'light' ? 'dark' : 'light',
-        }));
+        const currentTheme = getTheme(get().themeId);
+        const newTheme = currentTheme.baseTheme === 'dark' ? 'light' : 'dark';
+        set({
+          themeId: newTheme,
+          theme: newTheme,
+        });
       },
 
-      setTheme: (theme) => {
-        set({ theme });
+      setTheme: (themeId: ThemeId) => {
+        const theme = getTheme(themeId);
+        set({
+          themeId,
+          theme: theme.baseTheme,
+        });
       },
     }),
     {
