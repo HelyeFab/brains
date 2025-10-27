@@ -228,8 +228,13 @@ export function TerminalWidget({ widgetId }: TerminalWidgetProps) {
     let resizeObserver: ResizeObserver | null = null;
 
     async function setup() {
-      if (!containerRef.current || !window.api?.terminal) {
-        setError('Terminal API not available');
+      if (!containerRef.current) {
+        return;
+      }
+
+      // Check if running in Electron
+      if (!window.api?.terminal) {
+        setError('Terminal only works in the Electron app. Open Brains as a desktop application to use the terminal.');
         return;
       }
 
@@ -319,18 +324,28 @@ export function TerminalWidget({ widgetId }: TerminalWidgetProps) {
   }
 
   if (error) {
+    const isNotInElectron = error.includes('desktop application');
+
     return (
       <div className="h-full p-6 flex items-center justify-center">
         <Card className="p-6 max-w-md">
           <h3 className="text-lg font-semibold text-destructive mb-2">Terminal Error</h3>
           <p className="text-sm text-muted-foreground mb-4">{error}</p>
-          <p className="text-xs text-muted-foreground">
-            Make sure node-pty is installed and rebuilt for your Electron version:
-            <br />
-            <code className="bg-muted px-2 py-1 rounded mt-2 inline-block">
-              npm install node-pty && npm run postinstall
-            </code>
-          </p>
+          {!isNotInElectron && (
+            <p className="text-xs text-muted-foreground">
+              Make sure node-pty is installed and rebuilt for your Electron version:
+              <br />
+              <code className="bg-muted px-2 py-1 rounded mt-2 inline-block">
+                npm install node-pty && npm run postinstall
+              </code>
+            </p>
+          )}
+          {isNotInElectron && (
+            <p className="text-xs text-muted-foreground">
+              The terminal widget requires Electron's native capabilities.
+              Download and run the desktop app to use this feature.
+            </p>
+          )}
         </Card>
       </div>
     );

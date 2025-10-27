@@ -21,7 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
+import { atomOneDark } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import remarkGfm from 'remark-gfm';
 import javascript from 'react-syntax-highlighter/dist/cjs/languages/hljs/javascript';
 import typescript from 'react-syntax-highlighter/dist/cjs/languages/hljs/typescript';
@@ -622,7 +622,7 @@ export function AIChatWidget({ widgetId }: AIChatWidgetProps) {
                               return !inline && match ? (
                                 <div className="relative group">
                                   <SyntaxHighlighter
-                                    style={oneDark}
+                                    style={atomOneDark}
                                     language={match[1]}
                                     PreTag="div"
                                     {...props}

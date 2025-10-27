@@ -5,6 +5,10 @@ contextBridge.exposeInMainWorld('api', {
     open: (kind) => ipcRenderer.invoke('windows:open', kind),
     close: () => ipcRenderer.invoke('windows:close'),
   },
+  window: {
+    toggleFullscreen: () => ipcRenderer.invoke('window:toggleFullscreen'),
+    isFullscreen: () => ipcRenderer.invoke('window:isFullscreen'),
+  },
   browser: {
     open: (url) => ipcRenderer.invoke('browser:open', url),
   },
