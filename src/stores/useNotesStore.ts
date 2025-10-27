@@ -2,22 +2,28 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Note } from '@/types';
 
+/**
+ * Notes Data Store - Manages persistent note data only
+ *
+ * UI state (activeNoteId) has been moved to useUIStore
+ * This separation allows:
+ * - Easier data export/import
+ * - Testing CRUD without UI state
+ * - Clearing UI selections without losing data
+ */
 interface NotesStore {
   notes: Note[];
-  activeNoteId: string | null;
   createNote: (title?: string) => string;
   updateNote: (id: string, updates: Partial<Note>) => void;
   deleteNote: (id: string) => void;
   getNote: (id: string) => Note | undefined;
   getAllNotes: () => Note[];
-  setActiveNote: (id: string | null) => void;
 }
 
 export const useNotesStore = create<NotesStore>()(
   persist(
     (set, get) => ({
       notes: [],
-      activeNoteId: null,
 
       createNote: (title = 'Untitled Note') => {
         const id = `note-${Date.now()}`;
@@ -39,7 +45,6 @@ export const useNotesStore = create<NotesStore>()(
 
         set((state) => ({
           notes: [newNote, ...state.notes],
-          activeNoteId: id,
         }));
 
         return id;
@@ -60,20 +65,9 @@ export const useNotesStore = create<NotesStore>()(
       },
 
       deleteNote: (id) => {
-        set((state) => {
-          const newNotes = state.notes.filter((n) => n.id !== id);
-          const newActiveId =
-            state.activeNoteId === id
-              ? newNotes.length > 0
-                ? newNotes[0].id
-                : null
-              : state.activeNoteId;
-
-          return {
-            notes: newNotes,
-            activeNoteId: newActiveId,
-          };
-        });
+        set((state) => ({
+          notes: state.notes.filter((n) => n.id !== id),
+        }));
       },
 
       getNote: (id) => {
@@ -82,10 +76,6 @@ export const useNotesStore = create<NotesStore>()(
 
       getAllNotes: () => {
         return get().notes;
-      },
-
-      setActiveNote: (id) => {
-        set({ activeNoteId: id });
       },
     }),
     {

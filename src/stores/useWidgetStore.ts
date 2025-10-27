@@ -2,12 +2,19 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Widget, WidgetType } from '@/types';
 
+/**
+ * Widget Data Store - Manages persistent widget configuration only
+ *
+ * UI state (activeWidgetId) has been moved to useUIStore
+ * This separation allows:
+ * - Easier widget export/import
+ * - Testing widget operations without UI state
+ * - Clearing active selection without losing widgets
+ */
 interface WidgetStore {
   widgets: Widget[];
-  activeWidgetId: string | null;
-  addWidget: (type: WidgetType) => void;
+  addWidget: (type: WidgetType) => string;
   removeWidget: (id: string) => void;
-  setActiveWidget: (id: string | null) => void;
   updateWidget: (id: string, updates: Partial<Widget>) => void;
   clearWidgets: () => void;
 }
@@ -16,7 +23,6 @@ export const useWidgetStore = create<WidgetStore>()(
   persist(
     (set, get) => ({
       widgets: [],
-      activeWidgetId: null,
 
       addWidget: (type) => {
         const id = `${type}-${Date.now()}`;
@@ -31,6 +37,8 @@ export const useWidgetStore = create<WidgetStore>()(
           settings: 'Settings',
           calendar: 'Calendar',
           'ai-chat': 'AI Chat',
+          'code-server': 'Code Server',
+          'code-editor': 'Code Editor',
         };
 
         set((state) => ({
@@ -43,23 +51,15 @@ export const useWidgetStore = create<WidgetStore>()(
               data: {},
             },
           ],
-          activeWidgetId: id,
         }));
+
+        return id;
       },
 
       removeWidget: (id) => {
-        set((state) => {
-          const remainingWidgets = state.widgets.filter((w) => w.id !== id);
-          return {
-            widgets: remainingWidgets,
-            activeWidgetId:
-              state.activeWidgetId === id ? remainingWidgets[0]?.id ?? null : state.activeWidgetId,
-          };
-        });
-      },
-
-      setActiveWidget: (id) => {
-        set({ activeWidgetId: id });
+        set((state) => ({
+          widgets: state.widgets.filter((w) => w.id !== id),
+        }));
       },
 
       updateWidget: (id, updates) => {
@@ -69,7 +69,7 @@ export const useWidgetStore = create<WidgetStore>()(
       },
 
       clearWidgets: () => {
-        set({ widgets: [], activeWidgetId: null });
+        set({ widgets: [] });
       },
     }),
     {

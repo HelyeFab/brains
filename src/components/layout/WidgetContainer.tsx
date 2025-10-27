@@ -1,6 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { useWidgetStore } from '@/stores/useWidgetStore';
+import { useUIStore } from '@/stores/useUIStore';
 import { SystemMonitorWidget } from '@/components/widgets/SystemMonitorWidget';
 import { FileExplorerWidget } from '@/components/widgets/FileExplorerWidget';
 import { BrowserWidget } from '@/components/widgets/BrowserWidget';
@@ -9,6 +10,8 @@ import { PomodoroWidget } from '@/components/widgets/PomodoroWidget';
 import { NotePadWidget } from '@/components/widgets/NotePadWidget';
 import { SettingsWidget } from '@/components/widgets/SettingsWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
+import { CodeServerWidget } from '@/components/widgets/CodeServerWidget';
+import { CodeEditorWidget } from '@/components/widgets/CodeEditorWidget';
 import { WidgetErrorBoundary } from '@/components/widgets/WidgetErrorBoundary';
 import type { WidgetType } from '@/types';
 
@@ -49,16 +52,19 @@ const widgetComponents: Record<WidgetType, React.ComponentType<{ widgetId: strin
   settings: SettingsWidget,
   calendar: CalendarWidget,
   'ai-chat': AIChatWidget as React.ComponentType<{ widgetId: string }>,
+  'code-server': CodeServerWidget,
+  'code-editor': CodeEditorWidget,
 };
 
 export function WidgetContainer() {
-  const { widgets, activeWidgetId } = useWidgetStore();
+  const widgets = useWidgetStore((state) => state.widgets);
+  const activeWidgetId = useUIStore((state) => state.activeWidgetId);
   const activeWidget = widgets.find((w) => w.id === activeWidgetId);
 
   // Always show Welcome widget when no active widget is selected
   if (!activeWidget) {
     return (
-      <main className="h-full bg-background overflow-hidden" role="main" aria-label="Welcome widget">
+      <main className="h-full bg-background/90 backdrop-blur-sm overflow-hidden" role="main" aria-label="Welcome widget">
         <WidgetErrorBoundary
           widgetId="welcome-default"
           widgetTitle="Welcome"
@@ -73,7 +79,7 @@ export function WidgetContainer() {
   const WidgetComponent = widgetComponents[activeWidget.type];
 
   return (
-    <main className="h-full bg-background overflow-hidden" role="main" aria-label={`${activeWidget.title} widget`}>
+    <main className="h-full bg-background/90 backdrop-blur-sm overflow-hidden" role="main" aria-label={`${activeWidget.title} widget`}>
       <WidgetErrorBoundary
         widgetId={activeWidget.id}
         widgetTitle={activeWidget.title}

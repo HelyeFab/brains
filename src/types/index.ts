@@ -1,4 +1,4 @@
-export type WidgetType = 'terminal' | 'system-monitor' | 'file-explorer' | 'browser' | 'welcome' | 'pomodoro' | 'notepad' | 'settings' | 'calendar' | 'ai-chat';
+export type WidgetType = 'terminal' | 'system-monitor' | 'file-explorer' | 'browser' | 'welcome' | 'pomodoro' | 'notepad' | 'settings' | 'calendar' | 'ai-chat' | 'code-server' | 'code-editor';
 
 export interface Widget {
   id: string;

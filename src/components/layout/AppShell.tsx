@@ -36,16 +36,16 @@ export function AppShell() {
       style={{ backgroundColor: bgColor }}
     >
       <div className="relative z-10">
-        <Topbar className="bg-background" />
+        <Topbar className="bg-background/50 backdrop-blur-md" />
         <div className="flex h-[calc(100vh-3rem)]">
           <PanelGroup direction="horizontal">
-            <Panel defaultSize={15} minSize={10} maxSize={30} className="border-r border-border bg-background">
+            <Panel defaultSize={15} minSize={10} maxSize={30} className="border-r border-border bg-background/50 backdrop-blur-md">
               <Sidebar />
             </Panel>
 
             <PanelResizeHandle className="w-1 bg-border hover:bg-primary/50 transition-colors" />
 
-            <Panel defaultSize={85} minSize={50} className="bg-background">
+            <Panel defaultSize={85} minSize={50} className="bg-background/50 backdrop-blur-md">
               <WidgetContainer />
             </Panel>
           </PanelGroup>

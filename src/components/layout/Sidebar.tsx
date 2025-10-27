@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useWidgetStore } from '@/stores/useWidgetStore';
-import { Terminal, Activity, Folder, Globe, X, Home, Edit2, Check, Timer, FileText, Settings, Calendar, Bot } from 'lucide-react';
+import { useUIStore } from '@/stores/useUIStore';
+import { Terminal, Activity, Folder, Globe, X, Home, Edit2, Check, Timer, FileText, Settings, Calendar, Bot, Monitor, Code } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import type { WidgetType } from '@/types';
@@ -18,6 +19,8 @@ const widgetIcons: Record<WidgetType, React.ElementType> = {
   settings: Settings,
   calendar: Calendar,
   'ai-chat': Bot,
+  'code-server': Monitor,
+  'code-editor': Code,
 };
 
 const colorOptions = [
@@ -34,7 +37,12 @@ const colorOptions = [
 ];
 
 export function Sidebar() {
-  const { widgets, activeWidgetId, setActiveWidget, removeWidget, updateWidget, clearWidgets } = useWidgetStore();
+  const widgets = useWidgetStore((state) => state.widgets);
+  const removeWidget = useWidgetStore((state) => state.removeWidget);
+  const updateWidget = useWidgetStore((state) => state.updateWidget);
+  const clearWidgets = useWidgetStore((state) => state.clearWidgets);
+  const activeWidgetId = useUIStore((state) => state.activeWidgetId);
+  const setActiveWidgetId = useUIStore((state) => state.setActiveWidgetId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -109,11 +117,11 @@ export function Sidebar() {
                   aria-label={`Activate ${widget.title} widget`}
                   aria-pressed={isActive}
                   className="flex items-center gap-2 flex-1 min-w-0"
-                  onClick={() => !isEditing && setActiveWidget(widget.id)}
+                  onClick={() => !isEditing && setActiveWidgetId(widget.id)}
                   onKeyDown={(e) => {
                     if ((e.key === 'Enter' || e.key === ' ') && !isEditing) {
                       e.preventDefault();
-                      setActiveWidget(widget.id);
+                      setActiveWidgetId(widget.id);
                     }
                   }}
                 >

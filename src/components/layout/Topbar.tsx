@@ -3,6 +3,7 @@ import Script from 'next/script';
 import { Moon, Sun, Settings, Plus, X, Maximize, Minimize, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useThemeStore } from '@/stores/useThemeStore';
+import { useUIStore } from '@/stores/useUIStore';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useWidgetStore } from '@/stores/useWidgetStore';
 import type { WidgetType } from '@/types';
@@ -12,6 +13,7 @@ import { themes } from '@/config/themes';
 export function Topbar() {
   const { themeId, setTheme } = useThemeStore();
   const addWidget = useWidgetStore((state) => state.addWidget);
+  const setActiveWidgetId = useUIStore((state) => state.setActiveWidgetId);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
 
@@ -60,6 +62,9 @@ export function Topbar() {
     { type: 'system-monitor', label: 'System Monitor', icon: '📊' },
     { type: 'file-explorer', label: 'File Explorer', icon: '📁' },
     { type: 'browser', label: 'Browser', icon: '🌐' },
+    // Code development widgets (available in both browser and Electron)
+    { type: 'code-server', label: 'Code Server', icon: '💻' },
+    { type: 'code-editor', label: 'Code Editor', icon: '📄' },
     { type: 'pomodoro', label: 'Pomodoro Timer', icon: '⏱️' },
     { type: 'notepad', label: 'Notes', icon: '📝' },
     { type: 'calendar', label: 'Calendar', icon: '📅' },
@@ -68,14 +73,14 @@ export function Topbar() {
   ];
 
   return (
-    <header className="h-12 border-b border-border bg-card px-4 flex items-center justify-between drag-region" role="banner">
-      <div className="flex items-center gap-4">
+    <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between drag-region" role="banner">
+      <div className="flex items-center gap-6">
         <div className="no-drag">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-2 text-xl font-bold select-none cursor-pointer hover:opacity-80 transition-opacity pointer-events-auto"
+                className="flex items-center gap-3 text-xl font-bold select-none cursor-pointer hover:opacity-80 transition-opacity pointer-events-auto"
                 aria-label="Application menu"
               >
                 <img
@@ -83,7 +88,7 @@ export function Topbar() {
                   alt="Brains Logo"
                   className="h-8 w-8 pointer-events-none"
                 />
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent pointer-events-none">
+                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent pointer-events-none animate-gradient">
                   Brains
                 </span>
               </button>
@@ -123,7 +128,10 @@ export function Topbar() {
 
                 <DropdownMenu.Item
                   className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground rounded outline-none"
-                  onSelect={() => addWidget('settings')}
+                  onSelect={() => {
+                    const widgetId = addWidget('settings');
+                    setActiveWidgetId(widgetId);
+                  }}
                 >
                   <Settings className="h-4 w-4" aria-hidden="true" />
                   <span>Settings</span>
@@ -179,7 +187,10 @@ export function Topbar() {
                   <DropdownMenu.Item
                     key={widget.type}
                     className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground rounded outline-none"
-                    onSelect={() => addWidget(widget.type)}
+                    onSelect={() => {
+                      const widgetId = addWidget(widget.type);
+                      setActiveWidgetId(widgetId);
+                    }}
                   >
                     <span aria-hidden="true">{widget.icon}</span>
                     <span>{widget.label}</span>
@@ -191,12 +202,12 @@ export function Topbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 no-drag" role="toolbar" aria-label="Application controls">
+      <div className="flex items-center gap-4 no-drag" role="toolbar" aria-label="Application controls">
         <a
           href="https://www.buymeacoffee.com/YbEwc5qvHT"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#5F7FFF] hover:bg-[#4F6FEF] rounded-md transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-[#5F7FFF] hover:bg-[#4F6FEF] rounded-md transition-colors"
         >
           <span>☕</span>
           <span>Buy me a coffee</span>

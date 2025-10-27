@@ -5,7 +5,7 @@ import { formatBytes, formatPercentage } from '@/lib/utils';
 import { Activity, Cpu, HardDrive, Pause, Play, Zap, Timer, TrendingDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useAdaptivePolling, useThrottledValue } from '@/hooks/useAdaptivePolling';
-import { useWidgetStore } from '@/stores/useWidgetStore';
+import { useUIStore } from '@/stores/useUIStore';
 import type { SystemMetrics } from '@/types';
 
 interface SystemMonitorWidgetProps {
@@ -24,7 +24,7 @@ export function SystemMonitorWidget({ widgetId }: SystemMonitorWidgetProps) {
   const unsubRef = useRef<(() => void) | null>(null);
 
   // Get active widget status
-  const activeWidgetId = useWidgetStore((state) => state.activeWidgetId);
+  const activeWidgetId = useUIStore((state) => state.activeWidgetId);
   const isActive = activeWidgetId === widgetId;
 
   // Use adaptive polling

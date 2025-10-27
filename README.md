@@ -5,16 +5,18 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-ISC-green.svg)
 
-## ✨ Features
+## ✨ Standout Features
 
-- **🖥️ Single Window, Multiple Widgets**: Combine terminal, system monitor, file explorer, and browser in one beautiful interface
-- **⚡ Lightning Fast**: Built with modern web technologies (React 19, Next.js 16, TypeScript)
-- **🎨 Stunning Design**: Beautiful UI with Tailwind CSS, dark/light themes, and smooth animations
-- **📊 Real-Time Monitoring**: Live CPU, memory, and system metrics with beautiful charts
-- **💻 Integrated Terminal**: Full-featured terminal powered by xterm.js and node-pty
-- **🔧 Resizable Panels**: Customize your workspace layout with react-resizable-panels
-- **💾 Layout Persistence**: Your workspace layout is automatically saved
-- **🎭 Theme System**: Seamless dark/light mode switching
+- **🤖 Local AI Integration** - Chat with Ollama models without sending data to the cloud
+- **💻 Dual Code Editing** - Both remote code-server AND built-in Monaco Editor with 16 languages
+- **🎨 5 Unique Themes** - Dark, Light, Creativity, Love, and Cozy Home with animated backgrounds
+- **📚 Smart Bookmarks** - Convert any bookmarked page into a persistent widget
+- **⏱️ Built-in Pomodoro** - Stay focused with integrated timer and notifications
+- **🔐 Security Hardened** - Terminal rate limiting, sandboxed file access, IPC validation
+- **💾 Zero Config Persistence** - Everything saves automatically (layouts, widgets, data)
+- **⚡ Lightning Fast** - React 19, Next.js 16 Turbopack, Electron 38
+- **🖥️ 12 Powerful Widgets** - Terminal, Browser, AI Chat, Code Editor, Calendar, Notes, and more
+- **📊 Real-Time Monitoring** - Live CPU, memory, and system metrics with beautiful charts
 
 ## 🚀 Quick Start
 
@@ -66,36 +68,123 @@ This creates platform-specific installers in the `dist/` directory.
 
 ## 📖 Documentation
 
+- **[Complete Feature List](./FEATURES.md)** - Comprehensive documentation of all 12 widgets and features
 - [Architecture Overview](./docs/ARCHITECTURE.md)
 - [Widget Development Guide](./docs/WIDGET_DEVELOPMENT.md)
 - [Electron IPC API](./docs/IPC_API.md)
 - [Theming Guide](./docs/THEMING.md)
 - [Deployment Guide](./docs/DEPLOYMENT.md)
 
-## 🎯 Widgets
+## 🎯 All Widgets (12 Total)
 
-### Terminal Widget
-- Full xterm.js integration
+### 💻 Development Tools
+
+#### Terminal Widget (Electron only)
+- Full xterm.js terminal with 256-color support
 - Multiple terminal instances
-- Customizable colors and fonts
-- Resize support
+- PTY backend with node-pty
+- Customizable colors, fonts, and resize support
+- Security: Rate limiting, input sanitization, max 5 terminals/session
 
-### System Monitor Widget
-- Real-time CPU and memory usage
-- Per-core CPU metrics
-- Historical charts with Recharts
-- Live updates every second
+#### Code Server Widget
+- Connect to remote code-server instances (self-hosted VS Code)
+- Persistent URL storage
+- OAuth popup support for authentication
+- Works in both Electron (webview) and browser (iframe)
+- Settings dialog for easy configuration
 
-### File Explorer Widget
+#### Code Editor Widget
+- Built-in Monaco Editor (same as VS Code)
+- **16 programming languages**: JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, YAML, XML, SQL, Shell, Rust, Go, Java, C++, C
+- Multi-file tab system
+- Create/delete files, import/export
+- Auto-save to localStorage
+- Theme-aware (matches app dark/light theme)
+
+#### File Explorer Widget (Electron only)
 - Tree-based file navigation
-- File/folder icons
+- File and folder icons
 - Expandable directories
-- (File system integration coming soon)
+- Hidden file support
+- Sandboxed to home directory for security
 
-### Browser Widget
-- Open external URLs
-- Separate browser windows
-- URL navigation
+---
+
+### 🤖 AI & Productivity
+
+#### AI Chat Widget
+- Chat with **Ollama AI models locally** (no cloud, no API keys!)
+- Multiple conversation management with color coding
+- Markdown rendering with syntax highlighting
+- Stream responses with abort capability
+- Export/import conversations
+- Custom system prompts per conversation
+- Model selection and status checking
+
+#### Pomodoro Timer Widget
+- **Focus timer using Pomodoro Technique**
+- 3 modes: Work (25min), Short Break (5min), Long Break (15min)
+- Session counter
+- Browser notifications and audio alerts
+- Visual progress display
+
+#### Notes Widget
+- **Rich text editor powered by Tiptap**
+- WYSIWYG editing: bold, italic, headings, lists, code blocks, links
+- Multiple notes with color coding
+- Export/import notes as JSON
+- Auto-save as you type
+- Syntax highlighting for code blocks
+
+#### Calendar Widget
+- **Full calendar and event management**
+- Month, week, day, and agenda views
+- Create/edit/delete events
+- All-day event support
+- Color-coded events
+- Drag-and-drop rescheduling
+- Persistent across sessions
+
+---
+
+### 🌐 Web & System
+
+#### Browser Widget
+- **Embedded web browser** with full navigation
+- **Smart Bookmarks** - persistent across sessions
+- **Bookmark-to-Widget** - convert any bookmark into a dedicated widget!
+- OAuth popup support (Firebase, Google Sign-In, etc.)
+- Back/forward/reload navigation
+- Open in external window
+- Error handling and loading indicators
+
+#### System Monitor Widget (Electron only)
+- **Real-time system metrics**
+- CPU: Overall usage, user/system breakdown, per-core visualization
+- Memory: Total, used, free, active, swap
+- Historical charts with Recharts
+- Live updates every 1 second
+- Load averages (1, 5, 15 minutes)
+
+---
+
+### ⚙️ Configuration
+
+#### Settings Widget
+- Theme selection (5 themes)
+- Widget management
+- Appearance customization
+- About information
+
+#### Welcome Widget
+- App introduction and onboarding
+- Widget showcase with quick-start buttons
+- Feature highlights
+- Keyboard shortcuts reference
+
+---
+
+**See [FEATURES.md](./FEATURES.md) for complete documentation of all features.**
 
 ## 🛠️ Tech Stack
 

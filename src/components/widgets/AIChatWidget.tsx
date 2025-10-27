@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useChatStore } from '@/stores/useChatStore';
+import { useUIStore } from '@/stores/useUIStore';
+import { useOllamaModels, useOllamaStatus } from '@/hooks/useOllama';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import {
@@ -41,8 +43,6 @@ SyntaxHighlighter.registerLanguage('css', css);
 SyntaxHighlighter.registerLanguage('html', xml);
 SyntaxHighlighter.registerLanguage('xml', xml);
 import {
-  checkOllamaStatus,
-  listModels,
   generateChatResponse,
   formatModelSize,
 } from '@/lib/ollama';
@@ -68,21 +68,22 @@ interface AIChatWidgetProps {
 }
 
 export function AIChatWidget({ widgetId }: AIChatWidgetProps) {
-  const {
-    conversations,
-    activeConversationId,
-    createConversation,
-    deleteConversation,
-    updateConversation,
-    setActiveConversation,
-    getConversation,
-    addMessage,
-    clearMessages,
-  } = useChatStore();
+  const conversations = useChatStore((state) => state.conversations);
+  const createConversation = useChatStore((state) => state.createConversation);
+  const deleteConversation = useChatStore((state) => state.deleteConversation);
+  const updateConversation = useChatStore((state) => state.updateConversation);
+  const getConversation = useChatStore((state) => state.getConversation);
+  const addMessage = useChatStore((state) => state.addMessage);
+  const clearMessages = useChatStore((state) => state.clearMessages);
 
-  const [models, setModels] = useState<OllamaModel[]>([]);
+  const activeConversationId = useUIStore((state) => state.activeConversationId);
+  const setActiveConversationIdId = useUIStore((state) => state.setActiveConversationIdId);
+
+  // Use React Query for server state
+  const { data: models = [], isLoading: modelsLoading } = useOllamaModels();
+  const { data: isOllamaRunning = false, isLoading: statusLoading } = useOllamaStatus();
+
   const [selectedModel, setSelectedModel] = useState<string>('llama3.2');
-  const [isOllamaRunning, setIsOllamaRunning] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -96,33 +97,20 @@ export function AIChatWidget({ widgetId }: AIChatWidgetProps) {
     ? getConversation(activeConversationId)
     : null;
 
-  // Check Ollama status and load models
+  // Set first model as selected if available (React Query handles fetching)
   useEffect(() => {
-    async function init() {
-      const status = await checkOllamaStatus();
-      setIsOllamaRunning(status);
-
-      if (status) {
-        const availableModels = await listModels();
-        setModels(availableModels);
-
-        // Set first model as selected if available
-        if (availableModels.length > 0 && !selectedModel) {
-          setSelectedModel(availableModels[0].name);
-        }
-      }
+    if (models.length > 0 && !selectedModel) {
+      setSelectedModel(models[0].name);
     }
-
-    init();
-  }, []);
+  }, [models, selectedModel]);
 
   // Create initial conversation if none exist
   useEffect(() => {
     if (conversations.length === 0 && isOllamaRunning) {
       const id = createConversation(selectedModel);
-      setActiveConversation(id);
+      setActiveConversationId(id);
     } else if (!activeConversationId && conversations.length > 0) {
-      setActiveConversation(conversations[0].id);
+      setActiveConversationId(conversations[0].id);
     }
   }, [conversations.length, isOllamaRunning]);
 
@@ -235,7 +223,7 @@ export function AIChatWidget({ widgetId }: AIChatWidgetProps) {
 
   const handleNewChat = () => {
     const id = createConversation(selectedModel);
-    setActiveConversation(id);
+    setActiveConversationId(id);
   };
 
   const handleDeleteConversation = (id: string, e: React.MouseEvent) => {
@@ -391,7 +379,7 @@ export function AIChatWidget({ widgetId }: AIChatWidgetProps) {
                     'group relative p-3 rounded-md cursor-pointer transition-colors',
                     isActive ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
                   )}
-                  onClick={() => !isEditing && setActiveConversation(conv.id)}
+                  onClick={() => !isEditing && setActiveConversationId(conv.id)}
                   aria-current={isActive ? 'true' : undefined}
                 >
                   {/* Color indicator */}

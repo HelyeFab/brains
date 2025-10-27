@@ -2,15 +2,22 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Conversation, ChatMessage } from '@/types';
 
+/**
+ * Chat Data Store - Manages persistent conversation data only
+ *
+ * UI state (activeConversationId) has been moved to useUIStore
+ * This separation allows:
+ * - Easier data export/import
+ * - Testing CRUD without UI state
+ * - Clearing UI selections without losing conversations
+ */
 interface ChatStore {
   conversations: Conversation[];
-  activeConversationId: string | null;
 
   // Conversation management
   createConversation: (model: string, systemPrompt?: string) => string;
   deleteConversation: (id: string) => void;
   updateConversation: (id: string, updates: Partial<Conversation>) => void;
-  setActiveConversation: (id: string | null) => void;
   getConversation: (id: string) => Conversation | undefined;
 
   // Message management
@@ -23,7 +30,6 @@ export const useChatStore = create<ChatStore>()(
   persist(
     (set, get) => ({
       conversations: [],
-      activeConversationId: null,
 
       createConversation: (model, systemPrompt) => {
         const id = `conversation-${Date.now()}`;
@@ -39,23 +45,15 @@ export const useChatStore = create<ChatStore>()(
 
         set((state) => ({
           conversations: [...state.conversations, conversation],
-          activeConversationId: id,
         }));
 
         return id;
       },
 
       deleteConversation: (id) => {
-        set((state) => {
-          const remainingConversations = state.conversations.filter((c) => c.id !== id);
-          return {
-            conversations: remainingConversations,
-            activeConversationId:
-              state.activeConversationId === id
-                ? remainingConversations[0]?.id ?? null
-                : state.activeConversationId,
-          };
-        });
+        set((state) => ({
+          conversations: state.conversations.filter((c) => c.id !== id),
+        }));
       },
 
       updateConversation: (id, updates) => {
@@ -64,10 +62,6 @@ export const useChatStore = create<ChatStore>()(
             c.id === id ? { ...c, ...updates, updatedAt: Date.now() } : c
           ),
         }));
-      },
-
-      setActiveConversation: (id) => {
-        set({ activeConversationId: id });
       },
 
       getConversation: (id) => {

@@ -27,6 +27,7 @@ import {
   Check,
 } from 'lucide-react';
 import { useNotesStore } from '@/stores/useNotesStore';
+import { useUIStore } from '@/stores/useUIStore';
 import { cn } from '@/lib/utils';
 import type { Note } from '@/types';
 import * as Popover from '@radix-ui/react-popover';
@@ -51,15 +52,13 @@ const colorOptions = [
 ];
 
 export function NotePadWidget({ widgetId }: NotePadWidgetProps) {
-  const {
-    notes,
-    activeNoteId,
-    createNote,
-    updateNote,
-    deleteNote,
-    getNote,
-    setActiveNote,
-  } = useNotesStore();
+  const notes = useNotesStore((state) => state.notes);
+  const createNote = useNotesStore((state) => state.createNote);
+  const updateNote = useNotesStore((state) => state.updateNote);
+  const deleteNote = useNotesStore((state) => state.deleteNote);
+  const getNote = useNotesStore((state) => state.getNote);
+  const activeNoteId = useUIStore((state) => state.activeNoteId);
+  const setActiveNoteId = useUIStore((state) => state.setActiveNoteId);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isExporting, setIsExporting] = useState(false);
@@ -114,9 +113,9 @@ export function NotePadWidget({ widgetId }: NotePadWidgetProps) {
   useEffect(() => {
     if (notes.length === 0) {
       const id = createNote('My First Note');
-      setActiveNote(id);
+      setActiveNoteId(id);
     } else if (!activeNoteId && notes.length > 0) {
-      setActiveNote(notes[0].id);
+      setActiveNoteId(notes[0].id);
     }
   }, [notes.length]);
 
@@ -129,7 +128,7 @@ export function NotePadWidget({ widgetId }: NotePadWidgetProps) {
 
   const handleCreateNote = () => {
     const id = createNote();
-    setActiveNote(id);
+    setActiveNoteId(id);
   };
 
   const handleDeleteNote = (noteId: string, e: React.MouseEvent) => {
@@ -140,7 +139,7 @@ export function NotePadWidget({ widgetId }: NotePadWidgetProps) {
   };
 
   const handleSelectNote = (noteId: string) => {
-    setActiveNote(noteId);
+    setActiveNoteId(noteId);
   };
 
   const handleStartEdit = (noteId: string, currentTitle: string) => {
@@ -194,7 +193,7 @@ export function NotePadWidget({ widgetId }: NotePadWidgetProps) {
           createdAt: importedNote.createdAt,
           updatedAt: Date.now(),
         });
-        setActiveNote(id);
+        setActiveNoteId(id);
       }
     } catch (error) {
       console.error('Import error:', error);
